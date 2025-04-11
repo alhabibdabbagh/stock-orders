@@ -1,0 +1,62 @@
+package com.broker.stockorders.security;
+
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+
+@WebFilter(urlPatterns = "/api/*") // Filter hangi URL deseninde çalışacaksa
+@Component
+public class JwtAuthenticationFilter implements Filter {
+
+    private final JwtUtil jwtUtil; // JwtUtil nesnesini burada enjekte edeceğiz
+
+    @Autowired
+    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil; // Constructor aracılığıyla JwtUtil nesnesini alıyoruz
+    }
+
+    @Override
+    public void doFilter(jakarta.servlet.ServletRequest request, jakarta.servlet.ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+        // Token doğrulaması ve işleme burada yapılacak
+        String token = extractTokenFromRequest(httpRequest);
+        if (token != null && jwtUtil.validateToken(token)) {
+            // Token geçerli ise, kullanıcının bilgilerini doğrula
+            String username = jwtUtil.extractUsername(token);
+            // Authentication işlemi yapılabilir burada
+        }
+
+        chain.doFilter(request, response); // request-response işlem zincirine devam et
+    }
+
+    // Token'ı request'ten çıkarmak için yardımcı metot
+    private String extractTokenFromRequest(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            return token.substring(7); // "Bearer " kısmını atla
+        }
+        return null;
+    }
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // Gerekirse burada yapılacak bir başlatma işlemi varsa
+    }
+
+    @Override
+    public void destroy() {
+        // Gerekirse burada temizlik işlemi yapılabilir
+    }
+}

@@ -1,0 +1,25 @@
+package com.broker.stockorders.service;
+
+
+import com.broker.stockorders.entity.Asset;
+import com.broker.stockorders.entity.Customer;
+import com.broker.stockorders.repository.AssetRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class AssetService {
+
+    private final AssetRepository assetRepository;
+
+/*    public Page<Asset> listAssets(Customer customer, Pageable pageable) {
+        return assetRepository.findByCustomer(customer, pageable);
+    }
+
+    public Asset findAssetByCustomerAndName(Customer customer, String assetName) {
+        return assetRepository.findByCustomerIdAndAssetName(customer.getId(), assetName);
+    }*/
+}
