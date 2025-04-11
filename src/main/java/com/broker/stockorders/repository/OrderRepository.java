@@ -25,4 +25,15 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 
     List<Order> findByCustomerAndStatus(Customer customer, OrderStatus status);
+
+    // Page dönecek şekilde düzelt
+    Page<Order> findByCustomerId(Long customerId, Pageable pageable);
+
+    // Tarih filtresi eklemek isterseniz
+    Page<Order> findByCustomerIdAndCreateDateBetween(
+            Long customerId,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            Pageable pageable
+    );
 }

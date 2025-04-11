@@ -1,17 +1,16 @@
 package com.broker.stockorders.service;
 
+import com.broker.stockorders.dto.model.OrderStatus;
 import com.broker.stockorders.dto.response.OrderResponse;
-import com.broker.stockorders.entity.Customer;
 import com.broker.stockorders.entity.Order;
 import com.broker.stockorders.repository.CustomerRepository;
 import com.broker.stockorders.repository.OrderRepository;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @Service
@@ -26,25 +25,52 @@ public class OrderService {
         this.customerRepository = customerRepository;
     }
 
-    public List<OrderResponse> getOrdersByCustomerId(Long customerId) {
-        // Customer'ı bulma
-        Customer customer = customerRepository.findByUsername("ahmet")
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+    public List<OrderResponse> getOrdersByCustomerAndDateRange(
+            Long customerId,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            Pageable pageable
+    ) {
+        return orderRepository.findByCustomerIdAndCreateDateBetween(customerId, startDate, endDate, pageable)
+                .map(this::convertToOrderResponse).toList();
+    }
 
-        // Order'ları almak ve maplemek
+    private OrderResponse convertToOrderResponse(Order order) {
+        return OrderResponse.builder()
+                .id(order.getId())
+                .orderSide(order.getOrderSide() != null ? order.getOrderSide().name() : "UNKNOWN")
+                .size(order.getSize())
+                .price(order.getPrice())
+                .status(order.getStatus() != null ? order.getStatus().name() : "UNKNOWN")
+                .createDate(order.getCreateDate())
+                .customerId(order.getCustomer() != null ? order.getCustomer().getId() : null)
+                .assetId(order.getAsset() != null ? order.getAsset().getId() : null)
+                .build();
+    }
 
-        return customer.getOrderList().stream()
-                .map(order -> OrderResponse.builder()
-                        .orderSide(order.getOrderSide() != null ? order.getOrderSide().name() : "UNKNOWN")  // Null kontrolü ekledik
-                        .id(order.getId())
-                        .size(order.getSize())
-                        .price(order.getPrice())
-                        .status(order.getStatus() != null ? order.getStatus().name() : "UNKNOWN")  // Null kontrolü ekledik
-                        .createDate(order.getCreateDate())
-                        .customerId(order.getCustomer() != null ? order.getCustomer().getId() : null)
-                        .assetId(order.getAsset() != null ? order.getAsset().getId() : null)
-                        .build())  // OrderResponse oluştur
-                .collect(Collectors.toList());  // Map'lenmiş OrderResponse listesi döndür
+    public List<OrderResponse> getOrdersByCustomerId(Long customerId, Pageable pageable) {
+        // Customer kontrolü (opsiyonel)
+        if (!customerRepository.existsById(customerId)) {
+            throw new RuntimeException("Customer not found");
+        }
+
+        return orderRepository.findByCustomerId(customerId, pageable)
+                .map(this::convertToOrderResponse).toList();
+    }
+
+    public void deleteOrder(Long customerId, Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (order.getStatus().equals(OrderStatus.CANCELED))
+            throw new RuntimeException("Order already canceled");
+
+        if (!order.getCustomer().getId().equals(customerId)) {
+            throw new RuntimeException("You are not authorized to delete this order");
+        }
+
+        order.setStatus(OrderStatus.CANCELED);
+        orderRepository.save(order);
+
     }
 }
 

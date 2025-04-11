@@ -1,15 +1,9 @@
 package com.broker.stockorders.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.List;
 
 @Entity
 @Table(schema = "STOCK_SCHEMA", name = "asset")
-@Getter
-@Setter
 public class Asset {
 
     @Id
@@ -20,4 +14,35 @@ public class Asset {
     private Long size;          // Total owned
     private Long usableSize;    // Usable for trading
 
+    public Long getId() {
+        return this.id;
+    }
+
+    public String getAssetName() {
+        return this.assetName;
+    }
+
+    public Long getSize() {
+        return this.size;
+    }
+
+    public Long getUsableSize() {
+        return this.usableSize;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setAssetName(String assetName) {
+        this.assetName = assetName;
+    }
+
+    public void setSize(Long size) {
+        this.size = size;
+    }
+
+    public void setUsableSize(Long usableSize) {
+        this.usableSize = usableSize;
+    }
 }
