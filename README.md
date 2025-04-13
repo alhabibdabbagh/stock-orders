@@ -52,11 +52,6 @@ Spring Boot backend API for brokerage firm with complete order management includ
 - Java 21 JDK
 - Maven 3.6+
 
-### Steps
-```bash
-mvn clean package
-java -jar target/stock-orders-0.0.1-SNAPSHOT.jar
-
 
 ## 📮 Postman Collection
 
@@ -79,3 +74,9 @@ API testleri için hazırladığım Postman koleksiyonunu aşağıdaki bağlant�
      "admin_token": "YOUR_ADMIN_JWT",
      "customer_token": "YOUR_CUSTOMER_JWT"
    }
+
+### Steps
+```bash
+mvn clean package
+java -jar target/stock-orders-0.0.1-SNAPSHOT.jar
+
