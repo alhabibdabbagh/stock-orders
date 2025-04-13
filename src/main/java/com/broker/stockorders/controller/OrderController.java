@@ -1,5 +1,6 @@
 package com.broker.stockorders.controller;
 
+import com.broker.stockorders.dto.request.OrderRequest;
 import com.broker.stockorders.dto.response.AssetResponse;
 import com.broker.stockorders.dto.response.OrderResponse;
 import com.broker.stockorders.service.AssetService;
@@ -8,6 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -50,5 +54,26 @@ public class OrderController {
     ) {
         return assetService.getAssetsByCustomerId(customerId);
     }
+
+    @PostMapping
+    public ResponseEntity<OrderResponse> createOrder(
+            @RequestBody OrderRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(orderService.createOrder(request, userDetails.getUsername()));
+    }
+
+/*    @GetMapping
+    public ResponseEntity<List<OrderResponse>> getOrders(
+            @RequestParam(required = false) Long customerId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        return ResponseEntity.ok(orderService.getOrders(customerId, startDate, endDate));
+    }
+
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
+        orderService.cancelOrder(orderId);
+        return ResponseEntity.noContent().build();
+    }*/
 
 }
