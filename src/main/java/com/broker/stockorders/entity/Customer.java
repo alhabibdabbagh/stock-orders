@@ -21,9 +21,6 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orderList;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Asset> assetList;
-
 
     public void setId(Long id) {
         this.id = id;
@@ -65,7 +62,4 @@ public class Customer {
         return this.orderList;
     }
 
-    public List<Asset> getAssetList() {
-        return this.assetList;
-    }
 }

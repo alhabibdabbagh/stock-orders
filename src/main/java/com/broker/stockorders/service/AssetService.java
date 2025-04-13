@@ -25,7 +25,7 @@ public class AssetService {
 
     public List<AssetResponse> getAssetsByCustomerId(Long customerId) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new RuntimeException("Customer not found"));
-        List<Asset> assets = customer.getAssetList(); // Lazy loading()
+        List<Asset> assets = customerRepository.getAssetList(customer.getId()); // Lazy loading()
         return assets.stream().map(this::convertToAssetResponse).toList();
     }
 
