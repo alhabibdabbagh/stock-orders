@@ -44,8 +44,9 @@ public class OrderController {
     }
 
     @DeleteMapping("/{customerId}/orders/{orderId}")
-    public void deleteOrder(@PathVariable Long customerId, @PathVariable Long orderId) {
+    public ResponseEntity<Void>  deleteOrder(@PathVariable Long customerId, @PathVariable Long orderId) {
         orderService.deleteOrder(customerId, orderId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{customerId}/assets")
@@ -70,10 +71,6 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrders(customerId, startDate, endDate));
     }
 
-    @DeleteMapping("/{orderId}")
-    public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
-        orderService.cancelOrder(orderId);
-        return ResponseEntity.noContent().build();
-    }*/
+*/
 
 }

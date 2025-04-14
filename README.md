@@ -53,30 +53,31 @@ Spring Boot backend API for brokerage firm with complete order management includ
 - Maven 3.6+
 
 
+```bash
+mvn clean package
+java -jar target/stock-orders-0.0.1-SNAPSHOT.jar
+```
+
 ## 📮 Postman Collection
 
-API testleri için hazırladığım Postman koleksiyonunu aşağıdaki bağlantıdan indirebilirsiniz:
+You can download and import the Postman collection for API testing:
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/YOUR_COLLECTION_ID)
+📥 [Download Postman Collection (JSON)](./docs/postman/postman_collection.json)
 
-### Koleksiyon Özellikleri:
-- Tüm API endpoint'leri için örnek istekler
-- Ortam değişkenleriyle kolay test imkanı
-- Yetkilendirme örnekleri (Admin/Customer)
-- Örnek request/response'lar
+### 📦 Collection Features
+- Sample requests for all API endpoints
+- Easy testing with environment variables
+- Authorization examples for both **Admin** and **Customer** roles
+- Sample request/response payloads for reference
 
-### Kurulum:
-1. Yukarıdaki butona tıklayarak koleksiyonu içe aktarın
-2. Ortam değişkenlerini ayarlayın:
+### ⚙️ Setup Instructions
+1. Download the collection JSON file above and import it into your Postman workspace.
+2. Set up the following environment variables:
+
    ```json
    {
      "base_url": "http://localhost:9797",
      "admin_token": "YOUR_ADMIN_JWT",
      "customer_token": "YOUR_CUSTOMER_JWT"
    }
-
-### Steps
-```bash
-mvn clean package
-java -jar target/stock-orders-0.0.1-SNAPSHOT.jar
 

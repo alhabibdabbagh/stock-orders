@@ -100,7 +100,6 @@ public class OrderService {
 
     private void processBuyOrder(Order order, Asset asset, Asset tryAsset) {
         // Hisse miktarını artır
-        asset.setSize(asset.getSize() + order.getSize());
         asset.setUsableSize(asset.getUsableSize() + order.getSize());
         assetRepository.save(asset);
 
@@ -110,7 +109,6 @@ public class OrderService {
     private void processSellOrder(Order order, Asset asset, Asset tryAsset) {
         // TRY bakiyesini artır (satış geliri)
         BigDecimal totalValue = order.getPrice().multiply(BigDecimal.valueOf(order.getSize()));
-        tryAsset.setSize(tryAsset.getSize() + totalValue.longValue());
         tryAsset.setUsableSize(tryAsset.getUsableSize() + totalValue.longValue());
         assetRepository.save(tryAsset);
 
@@ -197,92 +195,3 @@ public class OrderService {
     }
 }
 
-
-/*
-@Service
-@RequiredArgsConstructor
-public class OrderService {
-
-    private  OrderRepository orderRepository;
-    private  AssetRepository assetRepository;
-
-*/
-/*    public Order createOrder(Customer customer, Asset asset, OrderSide side, Long size, BigDecimal price) {
-        // TRY ve usable size kontrolü burada yapılır
-        Asset tryAsset = assetRepository.findByCustomerIdAndAssetName(customer.getId(), "TRY");
-        if (side == OrderSide.BUY) {
-            BigDecimal total = price.multiply(BigDecimal.valueOf(size));
-            if (tryAsset.getUsableSize() < total.longValue()) {
-                throw new RuntimeException("Yetersiz TRY bakiyesi");
-            }
-            tryAsset.setUsableSize(tryAsset.getUsableSize() - total.longValue());
-        } else if (side == OrderSide.SELL) {
-            if (asset.getUsableSize() < size) {
-                throw new RuntimeException("Yetersiz varlık");
-            }
-            asset.setUsableSize(asset.getUsableSize() - size);
-        }
-
-        Order order = new Order();
-        order.setCustomer(customer);
-        order.setAsset(asset);
-        order.setSize(size);
-        order.setPrice(price);
-        order.setOrderSide(side);
-        order.setStatus(OrderStatus.PENDING);
-        order.setCreateDate(LocalDateTime.now());
-
-        assetRepository.save(asset);
-        assetRepository.save(tryAsset);
-        return orderRepository.save(order);
-    }
-
-    public Page<Order> listOrders(Customer customer, LocalDateTime from, LocalDateTime to, Pageable pageable) {
-        return orderRepository.findByCustomerAndCreateDateBetween(customer, from, to, pageable);
-    }
-
-    public void cancelOrder(Order order) {
-        if (!OrderStatus.PENDING.equals(order.getStatus())) {
-            throw new RuntimeException("Yalnızca pending order iptal edilebilir");
-        }
-
-        order.setStatus(OrderStatus.CANCELED);
-
-        if (OrderSide.BUY.equals(order.getOrderSide())) {
-            Asset tryAsset = assetRepository.findByCustomerIdAndAssetName(order.getCustomer().getId(), "TRY");
-            BigDecimal refund = order.getPrice().multiply(BigDecimal.valueOf(order.getSize()));
-            tryAsset.setUsableSize(tryAsset.getUsableSize() + refund.longValue());
-            assetRepository.save(tryAsset);
-        } else {
-            Asset asset = order.getAsset();
-            asset.setUsableSize(asset.getUsableSize() + order.getSize());
-            assetRepository.save(asset);
-        }
-
-        orderRepository.save(order);
-    }
-
-    public void matchOrder(Order order) {
-        if (!OrderStatus.PENDING.equals(order.getStatus())) {
-            throw new RuntimeException("Sadece pending order match yapılabilir");
-        }
-
-        Asset asset = order.getAsset();
-        Asset tryAsset = assetRepository.findByCustomerIdAndAssetName(order.getCustomer().getId(), "TRY");
-
-        if (OrderSide.BUY.equals(order.getOrderSide())) {
-            asset.setSize(asset.getSize() + order.getSize());
-            asset.setUsableSize(asset.getUsableSize() + order.getSize());
-        } else {
-            BigDecimal gain = order.getPrice().multiply(BigDecimal.valueOf(order.getSize()));
-            tryAsset.setSize(tryAsset.getSize() + gain.longValue());
-            tryAsset.setUsableSize(tryAsset.getUsableSize() + gain.longValue());
-        }
-
-        order.setStatus(OrderStatus.MATCHED);
-        assetRepository.save(asset);
-        assetRepository.save(tryAsset);
-        orderRepository.save(order);
-    }*//*
-
-}*/
