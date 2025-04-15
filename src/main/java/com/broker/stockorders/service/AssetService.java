@@ -4,7 +4,6 @@ package com.broker.stockorders.service;
 import com.broker.stockorders.dto.response.AssetResponse;
 import com.broker.stockorders.entity.Asset;
 import com.broker.stockorders.entity.Customer;
-import com.broker.stockorders.repository.AssetRepository;
 import com.broker.stockorders.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +13,9 @@ import java.util.List;
 //@RequiredArgsConstructor
 public class AssetService {
 
-    private final AssetRepository assetRepository;
     private final CustomerRepository customerRepository;
 
-    public AssetService(AssetRepository assetRepository, CustomerRepository customerRepository) {
-        this.assetRepository = assetRepository;
+    public AssetService(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 

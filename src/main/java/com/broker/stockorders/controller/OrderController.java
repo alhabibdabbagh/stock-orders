@@ -31,16 +31,16 @@ public class OrderController {
     }
 
     @GetMapping("/{customerId}/orders")
-    public List<OrderResponse> getOrdersByCustomerId(
+    public ResponseEntity<List<OrderResponse>> getOrdersByCustomerId(
             @PathVariable Long customerId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
             @PageableDefault(size = 20, sort = "createDate", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         if (startDate != null && endDate != null) {
-            return orderService.getOrdersByCustomerAndDateRange(customerId, startDate, endDate, pageable);
+            return ResponseEntity.ok(orderService.getOrdersByCustomerAndDateRange(customerId, startDate, endDate, pageable));
         }
-        return orderService.getOrdersByCustomerId(customerId, pageable);
+        return ResponseEntity.ok(orderService.getOrdersByCustomerId(customerId, pageable));
     }
 
     @DeleteMapping("/{customerId}/orders/{orderId}")
@@ -50,10 +50,10 @@ public class OrderController {
     }
 
     @GetMapping("/{customerId}/assets")
-    public List<AssetResponse> getAssetsByCustomerId(
+    public ResponseEntity<List<AssetResponse>> getAssetsByCustomerId(
             @PathVariable Long customerId
     ) {
-        return assetService.getAssetsByCustomerId(customerId);
+        return ResponseEntity.ok(assetService.getAssetsByCustomerId(customerId));
     }
 
     @PostMapping
@@ -62,15 +62,5 @@ public class OrderController {
             @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(orderService.createOrder(request, userDetails.getUsername()));
     }
-
-/*    @GetMapping
-    public ResponseEntity<List<OrderResponse>> getOrders(
-            @RequestParam(required = false) Long customerId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
-        return ResponseEntity.ok(orderService.getOrders(customerId, startDate, endDate));
-    }
-
-*/
 
 }
